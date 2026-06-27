@@ -76,9 +76,9 @@ tailwind.config = {
   <div class="max-w-7xl mx-auto px-3 sm:px-6 pt-3">
     <nav id="navbar-bar" class="tactile rounded-full px-3 sm:px-4 transition-all duration-300">
       <div class="flex items-center justify-between h-14 lg:h-16">
-        <a href="<?= url('index.php') ?>" class="flex items-center gap-2.5 group shrink-0 pl-1">
-          <span class="grid place-items-center w-10 h-10 rounded-2xl tile-accent text-white font-display font-bold text-lg group-active:translate-y-0.5 transition-transform">N</span>
-          <span class="font-display font-bold text-xl tracking-tightest text-ink text-emboss"><?= e($site) ?></span>
+        <a href="<?= url('index.php') ?>" class="flex items-center gap-2 sm:gap-2.5 group shrink-0 min-w-0 pl-1">
+          <span class="grid place-items-center w-9 h-9 sm:w-10 sm:h-10 rounded-2xl tile-accent text-white font-display font-bold text-base sm:text-lg group-active:translate-y-0.5 transition-transform shrink-0">N</span>
+          <span class="font-display font-bold text-base sm:text-xl tracking-tightest text-ink text-emboss truncate"><?= e($site) ?></span>
         </a>
 
         <div class="hidden lg:flex items-center gap-1 text-[15px] font-medium">

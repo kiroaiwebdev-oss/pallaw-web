@@ -33,10 +33,10 @@ $catIcons = ['cad-design'=>'compass','software-it'=>'code','data-ai'=>'cpu','bus
           <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-400/20 text-emerald-300 pulse-ring"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span></span>
           Trusted by <?= e(setting('hero_stat_students')) ?> learners across India
         </span>
-        <h1 class="mt-6 font-display text-[40px] leading-[1.04] sm:text-6xl font-bold tracking-tightest">
+        <h1 class="mt-6 font-display text-[32px] leading-[1.08] sm:text-5xl lg:text-6xl font-bold tracking-tightest">
           Learn the skills that <span class="text-gradient">get you hired.</span>
         </h1>
-        <p class="mt-6 text-lg text-slate-300 max-w-xl leading-relaxed">
+        <p class="mt-5 sm:mt-6 text-base sm:text-lg text-slate-300 max-w-xl leading-relaxed">
           Mentor-led, project-based programs in design, engineering &amp; IT — built with hiring partners and backed by a verified, shareable certificate.
         </p>
         <div class="mt-8 flex flex-col sm:flex-row gap-3.5">
@@ -102,12 +102,12 @@ $catIcons = ['cad-design'=>'compass','software-it'=>'code','data-ai'=>'cpu','bus
             <a href="<?= url('course.php?slug=' . urlencode($f['slug'])) ?>" class="btn-glass mt-4 flex items-center justify-center gap-2 px-5 py-3 text-sm">View Program <?= icon('arrow-up-right','w-4 h-4') ?></a>
             <?php endif; ?>
           </div>
-          <!-- floating pills -->
-          <div class="absolute -bottom-4 -left-4 px-4 py-3 rounded-2xl tactile animate-floaty flex items-center gap-2.5" style="animation-delay:-2s">
+          <!-- floating pills (hidden on small screens to avoid clipping) -->
+          <div class="hidden sm:flex absolute -bottom-4 -left-4 px-4 py-3 rounded-2xl tactile animate-floaty items-center gap-2.5" style="animation-delay:-2s">
             <span class="grid place-items-center w-9 h-9 rounded-xl tile-emerald text-white"><?= icon('award','w-5 h-5') ?></span>
             <div class="text-left"><p class="text-xs font-bold leading-none text-ink">Certificate</p><p class="text-[10px] text-slate-500 mt-1">Issued &amp; verifiable</p></div>
           </div>
-          <div class="absolute -top-4 -right-3 px-3.5 py-2.5 rounded-2xl tactile animate-floaty flex items-center gap-2" style="animation-delay:-4s">
+          <div class="hidden sm:flex absolute -top-4 -right-3 px-3.5 py-2.5 rounded-2xl tactile animate-floaty items-center gap-2" style="animation-delay:-4s">
             <span class="grid place-items-center w-8 h-8 rounded-lg tile-accent text-white"><?= icon('trending-up','w-4 h-4') ?></span>
             <div class="text-left"><p class="text-[11px] font-bold leading-none text-ink">98% placed</p><p class="text-[10px] text-slate-500 mt-0.5">after graduation</p></div>
           </div>
@@ -307,7 +307,7 @@ $catIcons = ['cad-design'=>'compass','software-it'=>'code','data-ai'=>'cpu','bus
         ];
         foreach ($steps as $i => $s): ?>
         <div class="reveal relative text-center" data-delay="<?= $i ?>">
-          <span class="relative z-10 inline-grid place-items-center w-18 h-18 rounded-full tactile text-brand-600 mx-auto" style="width:4.5rem;height:4.5rem"><?= icon($s[0],'w-7 h-7') ?></span>
+          <span class="relative z-10 inline-grid place-items-center rounded-full tactile text-brand-600 mx-auto" style="width:4.5rem;height:4.5rem"><?= icon($s[0],'w-7 h-7') ?></span>
           <span class="absolute top-0 left-1/2 -translate-x-1/2 -mt-1 ml-8 w-7 h-7 rounded-full tile-accent text-white text-xs font-bold grid place-items-center z-20"><?= $i+1 ?></span>
           <h3 class="mt-5 font-display font-bold text-ink"><?= $s[1] ?></h3>
           <p class="mt-2 text-sm text-slate-500"><?= $s[2] ?></p>
