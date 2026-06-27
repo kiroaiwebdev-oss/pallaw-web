@@ -20,7 +20,7 @@ $navLinks = [
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="<?= e(setting('tagline')) ?>">
-<meta name="theme-color" content="#0b1020">
+<meta name="theme-color" content="#e6eaf3">
 <meta property="og:title" content="<?= e($title) ?>">
 <meta property="og:description" content="<?= e(setting('tagline')) ?>">
 <meta property="og:type" content="website">
@@ -43,10 +43,14 @@ tailwind.config = {
           500:'#6366f1',600:'#4f46e5',700:'#4338ca',800:'#3730a3',900:'#312e81',950:'#1e1b4b',
         },
         ink: '#0b1020',
+        canvas: '#e6eaf3',
+        surface: '#eef1f8',
       },
       boxShadow: {
         'glow': '0 0 0 1px rgba(99,102,241,.1), 0 20px 60px -20px rgba(79,70,229,.45)',
         'card': '0 1px 2px rgba(16,24,40,.04), 0 8px 24px -12px rgba(16,24,40,.12)',
+        'raised': '10px 12px 26px rgba(43,54,92,.20), -8px -8px 20px rgba(255,255,255,.92)',
+        'inset-soft': 'inset 7px 7px 14px rgba(43,54,92,.18), inset -6px -6px 12px rgba(255,255,255,.9)',
       },
       letterSpacing: { tightest: '-.04em' },
     },
@@ -55,68 +59,68 @@ tailwind.config = {
 </script>
 <link rel="stylesheet" href="<?= url('assets/css/style.css') ?>">
 </head>
-<body class="font-sans bg-white text-slate-700 antialiased selection:bg-brand-100">
+<body class="font-sans bg-canvas text-slate-700 antialiased selection:bg-brand-100 grain">
 
 <!-- Announcement bar -->
-<div class="bg-ink text-white">
+<div class="obsidian text-white relative z-10">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-center gap-2 text-center text-[13px]">
     <span class="hidden sm:inline-flex items-center gap-1.5 font-medium"><?= icon('sparkles','w-3.5 h-3.5 text-brand-300') ?> Admissions open for Batch 2026 — limited seats.</span>
-    <span class="text-slate-400 hidden sm:inline">·</span>
+    <span class="text-slate-500 hidden sm:inline">·</span>
     <span class="text-slate-300">Talk to a counsellor</span>
     <a href="tel:<?= e(setting('phone')) ?>" class="font-semibold text-brand-300 hover:text-white transition inline-flex items-center gap-1"><?= icon('phone','w-3.5 h-3.5') ?><?= e(setting('phone')) ?></a>
   </div>
 </div>
 
-<!-- Navbar -->
-<header id="navbar" class="sticky top-0 z-50 transition-all duration-300 border-b border-transparent">
-  <div class="absolute inset-0 bg-white/70 backdrop-blur-xl -z-10" id="navbg"></div>
-  <nav class="max-w-7xl mx-auto px-4 sm:px-6">
-    <div class="flex items-center justify-between h-16 lg:h-[72px]">
-      <a href="<?= url('index.php') ?>" class="flex items-center gap-2.5 group shrink-0">
-        <span class="grid place-items-center w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-violet-600 text-white font-display font-bold text-lg shadow-glow group-hover:scale-105 transition-transform">N</span>
-        <span class="font-display font-bold text-xl tracking-tightest text-ink"><?= e($site) ?></span>
-      </a>
-
-      <div class="hidden lg:flex items-center gap-1 text-[15px] font-medium">
-        <?php foreach ($navLinks as $key => $l): $active = $key === $page; ?>
-          <a href="<?= url($l[1]) ?>" class="relative px-4 py-2 rounded-lg transition <?= $active ? 'text-ink' : 'text-slate-500 hover:text-ink hover:bg-slate-100/70' ?>">
-            <?= e($l[0]) ?>
-            <?php if ($active): ?><span class="absolute left-4 right-4 -bottom-px h-0.5 rounded-full bg-gradient-to-r from-brand-500 to-violet-600"></span><?php endif; ?>
-          </a>
-        <?php endforeach; ?>
-      </div>
-
-      <div class="hidden lg:flex items-center gap-2">
-        <a href="<?= url('student/login.php') ?>" class="text-[15px] font-semibold text-slate-600 hover:text-ink px-4 py-2 rounded-lg hover:bg-slate-100/70 transition">Student Login</a>
-        <a href="<?= url('courses.php') ?>" class="btn-shine group inline-flex items-center gap-1.5 text-[15px] font-semibold text-white bg-ink hover:bg-brand-600 px-5 py-2.5 rounded-full shadow-card transition">
-          Enroll Now <?= icon('arrow-right','w-4 h-4 group-hover:translate-x-0.5 transition-transform') ?>
+<!-- Navbar (floating tactile bar) -->
+<header id="navbar" class="sticky top-0 z-50 transition-all duration-300">
+  <div class="max-w-7xl mx-auto px-3 sm:px-6 pt-3">
+    <nav id="navbar-bar" class="tactile rounded-full px-3 sm:px-4 transition-all duration-300">
+      <div class="flex items-center justify-between h-14 lg:h-16">
+        <a href="<?= url('index.php') ?>" class="flex items-center gap-2.5 group shrink-0 pl-1">
+          <span class="grid place-items-center w-10 h-10 rounded-2xl tile-accent text-white font-display font-bold text-lg group-active:translate-y-0.5 transition-transform">N</span>
+          <span class="font-display font-bold text-xl tracking-tightest text-ink text-emboss"><?= e($site) ?></span>
         </a>
-      </div>
 
-      <button id="menuBtn" class="lg:hidden grid place-items-center w-10 h-10 rounded-lg text-ink hover:bg-slate-100 transition" aria-label="Open menu">
-        <?= icon('menu','w-6 h-6') ?>
-      </button>
-    </div>
-  </nav>
+        <div class="hidden lg:flex items-center gap-1 text-[15px] font-medium">
+          <?php foreach ($navLinks as $key => $l): $active = $key === $page; ?>
+            <a href="<?= url($l[1]) ?>" class="relative px-4 py-2 rounded-full transition <?= $active ? 'text-ink chip-inset' : 'text-slate-500 hover:text-ink' ?>">
+              <?= e($l[0]) ?>
+            </a>
+          <?php endforeach; ?>
+        </div>
+
+        <div class="hidden lg:flex items-center gap-2.5">
+          <a href="<?= url('student/login.php') ?>" class="btn3d-light inline-flex items-center text-[15px] px-5 py-2.5">Student Login</a>
+          <a href="<?= url('courses.php') ?>" class="btn3d btn-shine group inline-flex items-center gap-1.5 text-[15px] text-white px-5 py-2.5">
+            Enroll Now <?= icon('arrow-right','w-4 h-4 group-hover:translate-x-0.5 transition-transform') ?>
+          </a>
+        </div>
+
+        <button id="menuBtn" class="lg:hidden grid place-items-center w-11 h-11 rounded-full chip-raised text-ink active:translate-y-0.5 transition" aria-label="Open menu">
+          <?= icon('menu','w-6 h-6') ?>
+        </button>
+      </div>
+    </nav>
+  </div>
 
   <!-- Mobile menu -->
   <div id="mobileMenu" class="lg:hidden fixed inset-0 z-50 hidden">
-    <div id="mmOverlay" class="absolute inset-0 bg-ink/40 backdrop-blur-sm"></div>
-    <div id="mmPanel" class="absolute top-0 right-0 h-full w-[82%] max-w-sm bg-white shadow-2xl translate-x-full transition-transform duration-300 flex flex-col">
-      <div class="flex items-center justify-between px-5 h-16 border-b border-slate-100">
-        <span class="font-display font-bold text-lg text-ink"><?= e($site) ?></span>
-        <button id="menuClose" class="grid place-items-center w-10 h-10 rounded-lg hover:bg-slate-100" aria-label="Close menu"><?= icon('x','w-6 h-6') ?></button>
+    <div id="mmOverlay" class="absolute inset-0 bg-ink/50 backdrop-blur-sm"></div>
+    <div id="mmPanel" class="absolute top-0 right-0 h-full w-[84%] max-w-sm bg-canvas grain shadow-2xl translate-x-full transition-transform duration-300 flex flex-col">
+      <div class="flex items-center justify-between px-5 h-16">
+        <span class="font-display font-bold text-lg text-ink text-emboss"><?= e($site) ?></span>
+        <button id="menuClose" class="grid place-items-center w-11 h-11 rounded-full chip-raised text-ink active:translate-y-0.5" aria-label="Close menu"><?= icon('x','w-6 h-6') ?></button>
       </div>
-      <div class="flex-1 overflow-y-auto px-4 py-4 space-y-1 text-[15px] font-medium">
+      <div class="flex-1 overflow-y-auto px-4 py-4 space-y-2.5 text-[15px] font-medium">
         <?php foreach ($navLinks as $key => $l): ?>
-          <a href="<?= url($l[1]) ?>" class="flex items-center justify-between px-4 py-3 rounded-xl <?= $key===$page ? 'bg-brand-50 text-brand-700' : 'text-slate-600 hover:bg-slate-50' ?>">
-            <?= e($l[0]) ?> <?= icon('chevron-right','w-4 h-4 text-slate-300') ?>
+          <a href="<?= url($l[1]) ?>" class="flex items-center justify-between px-5 py-3.5 rounded-2xl <?= $key===$page ? 'tactile-inset text-brand-700 font-semibold' : 'tactile text-slate-600' ?>">
+            <?= e($l[0]) ?> <?= icon('chevron-right','w-4 h-4 text-slate-400') ?>
           </a>
         <?php endforeach; ?>
       </div>
-      <div class="p-4 border-t border-slate-100 space-y-2">
-        <a href="<?= url('student/login.php') ?>" class="block text-center px-4 py-3 rounded-xl border border-slate-200 font-semibold text-slate-700">Student Login</a>
-        <a href="<?= url('courses.php') ?>" class="block text-center px-4 py-3 rounded-xl bg-ink text-white font-semibold">Enroll Now</a>
+      <div class="p-4 space-y-3">
+        <a href="<?= url('student/login.php') ?>" class="btn3d-light block text-center px-4 py-3.5 font-semibold text-slate-700">Student Login</a>
+        <a href="<?= url('courses.php') ?>" class="btn3d block text-center px-4 py-3.5 text-white font-semibold">Enroll Now</a>
         <a href="tel:<?= e(setting('phone')) ?>" class="flex items-center justify-center gap-2 px-4 py-3 text-sm text-slate-500"><?= icon('phone','w-4 h-4') ?><?= e(setting('phone')) ?></a>
       </div>
     </div>

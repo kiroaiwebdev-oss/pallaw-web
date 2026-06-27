@@ -1,35 +1,235 @@
 /* ============================================================
-   Nexora Institute — premium design system
-   (Tailwind via CDN handles utilities; this adds the polish)
+   Nexora Institute — "Tactile" design system
+   Modern Soft-Skeuomorphism: real depth, embossed surfaces,
+   glossy controls, brushed materials & frosted glass.
+   (Tailwind via CDN handles utilities; this adds the physical polish)
    ============================================================ */
 
 :root {
+  /* Brand */
   --brand: #6366f1;
   --brand-600: #4f46e5;
+  --brand-700: #4338ca;
   --brand-light: #818cf8;
   --ink: #0b1020;
+
+  /* Tactile canvas + surface ramp */
+  --canvas: #e6eaf3;
+  --surface: #eef1f8;
+  --surface-hi: #ffffff;      /* light source highlight */
+  --surface-lo: #c9d0e0;      /* shadow side */
+
+  /* Light + dark shadow used for neumorphism */
+  --sh-dark: rgba(43, 54, 92, .20);
+  --sh-dark-strong: rgba(33, 42, 74, .30);
+  --sh-light: rgba(255, 255, 255, .92);
+
+  /* Radii */
+  --r-lg: 26px;
+  --r-md: 20px;
+  --r-sm: 14px;
 }
 
 * { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
 html { -webkit-tap-highlight-color: transparent; scroll-behavior: smooth; }
-body { overflow-x: hidden; }
+body { overflow-x: hidden; background-color: var(--canvas); }
 
 /* Selection */
-::selection { background: rgba(99,102,241,.22); color: #1e1b4b; }
+::selection { background: rgba(99,102,241,.24); color: #1e1b4b; }
 
 /* Custom scrollbar */
-::-webkit-scrollbar { width: 11px; height: 11px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #d4d9e4; border-radius: 9px; border: 3px solid transparent; background-clip: content-box; }
-::-webkit-scrollbar-thumb:hover { background: #b3bacb; background-clip: content-box; }
+::-webkit-scrollbar { width: 12px; height: 12px; }
+::-webkit-scrollbar-track { background: var(--canvas); }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #c4cbdd, #aab3ca);
+  border-radius: 9px; border: 3px solid var(--canvas); background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover { background: #97a1bd; background-clip: content-box; }
 
-/* ---- Gradient text ---- */
+/* ============================================================
+   FINE GRAIN — subtle paper/material noise for premium feel
+   ============================================================ */
+.grain { position: relative; }
+.grain::before {
+  content: ""; position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: .035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ============================================================
+   TACTILE SURFACES (neumorphic)
+   ============================================================ */
+
+/* Raised panel — appears to lift off the canvas */
+.tactile {
+  background: linear-gradient(150deg, #f6f8fe 0%, #e3e8f3 100%);
+  border-radius: var(--r-md);
+  box-shadow:
+    10px 12px 26px var(--sh-dark),
+   -8px -8px 20px var(--sh-light),
+    inset 0 1px 0 rgba(255,255,255,.85),
+    inset 0 -1px 0 rgba(120,130,160,.12);
+}
+
+/* Strong raised — for hero/feature elements */
+.tactile-xl {
+  background: linear-gradient(150deg, #f7f9ff 0%, #e1e6f2 100%);
+  border-radius: var(--r-lg);
+  box-shadow:
+    18px 22px 48px var(--sh-dark-strong),
+   -12px -12px 30px var(--sh-light),
+    inset 0 2px 0 rgba(255,255,255,.9),
+    inset 0 -2px 2px rgba(120,130,160,.16);
+}
+
+/* Pressed / debossed well — carved into the surface */
+.tactile-inset {
+  background: linear-gradient(150deg, #dde3f1 0%, #f1f4fb 100%);
+  border-radius: var(--r-md);
+  box-shadow:
+    inset 7px 7px 14px rgba(43,54,92,.18),
+    inset -6px -6px 12px rgba(255,255,255,.9);
+}
+
+/* Interactive hover lift for tactile cards */
+.tactile-lift { transition: transform .45s cubic-bezier(.2,.7,.2,1), box-shadow .45s cubic-bezier(.2,.7,.2,1); will-change: transform; }
+.tactile-lift:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    18px 26px 50px var(--sh-dark-strong),
+   -10px -10px 26px var(--sh-light),
+    inset 0 1px 0 rgba(255,255,255,.9);
+}
+
+/* Embossed icon "chip/well" */
+.chip-raised {
+  background: linear-gradient(150deg, #fbfcff, #dfe5f2);
+  box-shadow: 5px 5px 12px var(--sh-dark), -4px -4px 10px var(--sh-light), inset 0 1px 0 rgba(255,255,255,.9);
+}
+.chip-inset {
+  background: linear-gradient(150deg, #dde3f1, #eef2fb);
+  box-shadow: inset 4px 4px 9px rgba(43,54,92,.20), inset -4px -4px 9px rgba(255,255,255,.92);
+}
+
+/* ============================================================
+   GLOSSY 3D CONTROLS — buttons you can feel press
+   ============================================================ */
+.btn3d {
+  position: relative; isolation: isolate; overflow: hidden;
+  border-radius: 9999px; color: #fff; font-weight: 600;
+  background: linear-gradient(180deg, #7c7ff6 0%, #5b54ec 48%, #4a40d8 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.55),
+    inset 0 -3px 8px rgba(28,22,90,.45),
+    0 10px 22px -6px rgba(79,70,229,.6),
+    0 3px 6px rgba(20,20,50,.25);
+  transition: transform .12s ease, box-shadow .2s ease, filter .2s ease;
+}
+.btn3d::before { /* glossy top sheen */
+  content: ""; position: absolute; inset: 1px 1px 45% 1px; border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255,255,255,.4), rgba(255,255,255,0));
+  pointer-events: none; z-index: -1;
+}
+.btn3d:hover { filter: brightness(1.05); box-shadow: inset 0 1px 0 rgba(255,255,255,.6), inset 0 -3px 8px rgba(28,22,90,.45), 0 14px 28px -6px rgba(79,70,229,.7), 0 4px 8px rgba(20,20,50,.3); }
+.btn3d:active { transform: translateY(2px); box-shadow: inset 0 2px 6px rgba(20,16,70,.5), inset 0 -1px 0 rgba(255,255,255,.25), 0 4px 10px -4px rgba(79,70,229,.5); }
+
+/* Light tactile button (on light canvas) */
+.btn3d-light {
+  position: relative; border-radius: 9999px; font-weight: 600; color: #2b3357;
+  background: linear-gradient(180deg, #ffffff 0%, #e7ecf7 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.95),
+    6px 8px 18px var(--sh-dark),
+   -5px -5px 14px var(--sh-light);
+  transition: transform .12s ease, box-shadow .2s ease;
+}
+.btn3d-light:hover { box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 8px 12px 24px var(--sh-dark), -6px -6px 16px var(--sh-light); }
+.btn3d-light:active { transform: translateY(2px); box-shadow: inset 5px 5px 11px rgba(43,54,92,.18), inset -4px -4px 9px rgba(255,255,255,.9); }
+
+/* Dark glossy button (on obsidian) */
+.btn3d-dark {
+  position: relative; isolation: isolate; overflow: hidden; border-radius: 9999px; font-weight: 600; color: #fff;
+  background: linear-gradient(180deg, #2a3252 0%, #161c30 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.14), inset 0 -3px 8px rgba(0,0,0,.5), 0 12px 26px -8px rgba(0,0,0,.7);
+  transition: transform .12s ease, box-shadow .2s ease, filter .2s ease;
+}
+.btn3d-dark:hover { filter: brightness(1.12); }
+.btn3d-dark:active { transform: translateY(2px); box-shadow: inset 0 2px 8px rgba(0,0,0,.6); }
+
+/* Glassy white button on dark */
+.btn-glass {
+  position: relative; border-radius: 9999px; font-weight: 600; color: var(--ink);
+  background: linear-gradient(180deg, #ffffff, #eef1f8);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,1), 0 12px 28px -8px rgba(0,0,0,.55), 0 2px 4px rgba(0,0,0,.3);
+  transition: transform .12s ease, box-shadow .2s ease, filter .2s ease;
+}
+.btn-glass:hover { filter: brightness(1.03); transform: translateY(-1px); }
+.btn-glass:active { transform: translateY(2px); box-shadow: inset 0 2px 6px rgba(120,130,160,.4); }
+
+/* ============================================================
+   OBSIDIAN — deep tactile dark panels (hero / why-us / footer)
+   ============================================================ */
+.obsidian {
+  position: relative;
+  background:
+    radial-gradient(120% 120% at 50% -10%, #1b2238 0%, #0d1222 55%, #080b16 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    inset 0 -40px 80px rgba(0,0,0,.45);
+}
+.obsidian-panel {
+  background: linear-gradient(160deg, rgba(255,255,255,.06), rgba(255,255,255,.015));
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--r-md);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.12),
+    0 24px 48px -20px rgba(0,0,0,.7);
+  backdrop-filter: blur(8px);
+}
+.obsidian-inset {
+  background: rgba(0,0,0,.25);
+  border-radius: var(--r-sm);
+  box-shadow: inset 0 2px 6px rgba(0,0,0,.55), inset 0 -1px 0 rgba(255,255,255,.05);
+}
+
+/* ============================================================
+   MATERIALS — brushed metal, glass, glossy accent tiles
+   ============================================================ */
+.metal {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.5), rgba(255,255,255,0) 40%),
+    repeating-linear-gradient(90deg, #cfd6e6 0px, #e7ecf6 2px, #cfd6e6 4px),
+    linear-gradient(180deg, #dfe4f0, #c6cee0);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.8), 0 6px 14px rgba(43,54,92,.18);
+}
+
+/* Accent glossy tile (gradient icon plates) */
+.tile-accent {
+  background: linear-gradient(160deg, #8b8ff8 0%, #5b54ec 55%, #4a40d8 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.5),
+    inset 0 -4px 8px rgba(28,22,90,.5),
+    0 10px 20px -6px rgba(79,70,229,.55);
+}
+.tile-emerald { background: linear-gradient(160deg, #34d399 0%, #059669 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset 0 -4px 8px rgba(4,80,50,.5), 0 10px 20px -6px rgba(16,185,129,.5); }
+.tile-amber  { background: linear-gradient(160deg, #fbbf24 0%, #d97706 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset 0 -4px 8px rgba(120,60,4,.5), 0 10px 20px -6px rgba(217,119,6,.5); }
+.tile-rose   { background: linear-gradient(160deg, #fb7185 0%, #e11d48 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset 0 -4px 8px rgba(120,10,40,.5), 0 10px 20px -6px rgba(225,29,72,.5); }
+
+/* Knurled grip texture (for handle/edge accents) */
+.knurl {
+  background-image: repeating-linear-gradient(45deg, rgba(0,0,0,.10) 0 2px, transparent 2px 4px);
+}
+
+/* ============================================================
+   TEXT + DECOR
+   ============================================================ */
 .text-gradient {
   background: linear-gradient(110deg, #6366f1 0%, #8b5cf6 45%, #ec4899 100%);
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
 }
+.text-emboss { text-shadow: 0 1px 0 rgba(255,255,255,.7); }
+.text-deboss { text-shadow: 0 1px 1px rgba(255,255,255,.6), 0 -1px 1px rgba(43,54,92,.25); }
 
-/* ---- Aurora / mesh background ---- */
+/* ---- Aurora / mesh (kept for obsidian sections) ---- */
 .hero-aurora { position: absolute; inset: 0; overflow: hidden; z-index: 0; pointer-events: none; }
 .hero-aurora span { position: absolute; border-radius: 9999px; filter: blur(90px); opacity: .5; }
 .hero-aurora span:nth-child(1){ width:520px;height:520px;background:#6366f1;top:-140px;left:-100px;animation:blob 18s infinite ease-in-out;}
@@ -44,8 +244,8 @@ body { overflow-x: hidden; }
 /* ---- Grid / dot textures ---- */
 .bg-grid {
   background-image:
-    linear-gradient(to right, rgba(99,102,241,.08) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(99,102,241,.08) 1px, transparent 1px);
+    linear-gradient(to right, rgba(255,255,255,.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,.05) 1px, transparent 1px);
   background-size: 44px 44px;
   -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 40%, transparent 100%);
           mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 40%, transparent 100%);
@@ -53,6 +253,11 @@ body { overflow-x: hidden; }
 .bg-dots {
   background-image: radial-gradient(rgba(255,255,255,.10) 1px, transparent 1px);
   background-size: 22px 22px;
+}
+/* engraved dot texture for light surfaces */
+.bg-emboss-dots {
+  background-image: radial-gradient(rgba(43,54,92,.10) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
 /* ---- Reveal on scroll ---- */
@@ -62,26 +267,16 @@ body { overflow-x: hidden; }
 .reveal[data-delay="3"]{ transition-delay:.24s } .reveal[data-delay="4"]{ transition-delay:.32s }
 .reveal[data-delay="5"]{ transition-delay:.40s }
 
-/* ---- Card hover lift ---- */
+/* legacy hover lift (kept for non-tactile pages) */
 .card-lift { transition: transform .4s cubic-bezier(.2,.7,.2,1), box-shadow .4s, border-color .4s; will-change: transform; }
 .card-lift:hover { transform: translateY(-6px); box-shadow: 0 28px 56px -24px rgba(49,46,129,.4); }
 
-/* ---- Gradient border card ---- */
-.border-gradient { position: relative; background: #fff; }
-.border-gradient::before {
-  content:""; position:absolute; inset:0; padding:1px; border-radius:inherit;
-  background: linear-gradient(140deg, rgba(99,102,241,.5), rgba(168,85,247,.25), transparent 60%);
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor; mask-composite: exclude; pointer-events:none;
-}
-
-/* ---- Shine button ---- */
+/* ---- Shine sweep (used on glossy buttons) ---- */
 .btn-shine { position: relative; overflow: hidden; }
 .btn-shine::after {
   content:""; position:absolute; top:0; left:-130%; width:60%; height:100%;
-  background: linear-gradient(120deg, transparent, rgba(255,255,255,.45), transparent);
-  transform: skewX(-20deg); transition: left .7s;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,.55), transparent);
+  transform: skewX(-20deg); transition: left .7s; pointer-events: none;
 }
 .btn-shine:hover::after { left:140%; }
 
@@ -116,5 +311,6 @@ body { overflow-x: hidden; }
 @media print {
   .no-print { display: none !important; }
   body { background:#fff !important; }
+  .grain::before { display: none !important; }
   .print-area { box-shadow:none !important; margin:0 !important; }
 }

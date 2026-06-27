@@ -28,13 +28,15 @@
   overlay  && overlay.addEventListener('click', closeMenu);
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
 
-  /* ---- Navbar background on scroll ---- */
-  const navbar = document.getElementById('navbar');
-  const navbg  = document.getElementById('navbg');
+  /* ---- Floating navbar: tighten on scroll ---- */
+  const navbar    = document.getElementById('navbar');
+  const navbarBar = document.getElementById('navbar-bar');
   const onScroll = () => {
     const scrolled = window.scrollY > 8;
-    if (navbar) navbar.classList.toggle('border-slate-200/70', scrolled);
-    if (navbg)  navbg.classList.toggle('shadow-sm', scrolled);
+    if (navbarBar) {
+      navbarBar.classList.toggle('scale-[.99]', scrolled);
+      navbarBar.classList.toggle('shadow-raised', scrolled);
+    }
     const toTop = document.getElementById('toTop');
     if (toTop) {
       const show = window.scrollY > 600;
