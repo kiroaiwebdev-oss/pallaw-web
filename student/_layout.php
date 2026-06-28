@@ -37,19 +37,23 @@ tailwind.config = { theme: { extend: {
 <body class="font-sans bg-slate-100 text-slate-800 antialiased">
 <div class="min-h-screen lg:flex">
   <!-- Sidebar -->
-  <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-40 w-72 bg-slate-950 text-slate-300 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col">
-    <div class="p-6 flex items-center gap-3 border-b border-white/10">
-      <span class="grid place-items-center w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-violet-600 text-white font-display font-bold">N</span>
-      <div><p class="font-display font-bold text-white leading-tight"><?= e(setting('site_name')) ?></p><p class="text-xs text-slate-400">Student Portal</p></div>
+  <aside id="sidebar" class="fixed lg:sticky inset-y-0 lg:top-0 left-0 z-40 w-72 lg:h-screen bg-slate-950 text-slate-300 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col">
+    <div class="p-6 flex items-center gap-3 border-b border-white/10 shrink-0">
+      <?php $slogo = media(setting('logo')); if ($slogo): ?>
+        <span class="grid place-items-center w-10 h-10 rounded-xl bg-white overflow-hidden shrink-0"><img src="<?= e($slogo) ?>" alt="" class="w-full h-full object-contain p-1"></span>
+      <?php else: ?>
+        <span class="grid place-items-center w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-violet-600 text-white font-display font-bold shrink-0">N</span>
+      <?php endif; ?>
+      <div class="min-w-0"><p class="font-display font-bold text-white leading-tight truncate"><?= e(setting('site_name')) ?></p><p class="text-xs text-slate-400">Student Portal</p></div>
     </div>
-    <nav class="flex-1 p-4 space-y-1">
+    <nav class="flex-1 p-4 space-y-1 overflow-y-auto sb-scroll">
       <?php foreach ($nav as $key => $item): $is = $key === $active; ?>
         <a href="<?= url('student/' . $item[2]) ?>" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition <?= $is ? 'bg-brand-600 text-white shadow-lg shadow-brand-600/30' : 'hover:bg-white/5 hover:text-white' ?>">
           <span class="text-lg"><?= $item[1] ?></span><?= $item[0] ?>
         </a>
       <?php endforeach; ?>
     </nav>
-    <div class="p-4 border-t border-white/10">
+    <div class="p-4 border-t border-white/10 shrink-0">
       <a href="<?= url('index.php') ?>" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm hover:bg-white/5 hover:text-white transition">🌐 View Website</a>
       <a href="<?= url('student/logout.php') ?>" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-rose-300 hover:bg-rose-500/10 transition">⎋ Logout</a>
     </div>
@@ -66,7 +70,11 @@ tailwind.config = { theme: { extend: {
         </div>
         <div class="flex items-center gap-3">
           <div class="text-right hidden sm:block"><p class="text-sm font-semibold text-slate-900"><?= e($student['name']) ?></p><p class="text-xs text-slate-400"><?= e($student['student_code']) ?></p></div>
-          <span class="grid place-items-center w-10 h-10 rounded-full bg-gradient-to-br from-brand-500 to-violet-600 text-white font-bold"><?= e(strtoupper(substr($student['name'],0,1))) ?></span>
+          <?php $sphoto = media($student['photo'] ?? ''); if ($sphoto): ?>
+            <img src="<?= e($sphoto) ?>" alt="" class="w-10 h-10 rounded-full object-cover ring-2 ring-brand-200">
+          <?php else: ?>
+            <span class="grid place-items-center w-10 h-10 rounded-full bg-gradient-to-br from-brand-500 to-violet-600 text-white font-bold"><?= e(strtoupper(substr($student['name'],0,1))) ?></span>
+          <?php endif; ?>
         </div>
       </div>
     </header>

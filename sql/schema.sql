@@ -46,7 +46,8 @@ INSERT INTO settings (skey, svalue) VALUES
   ('institute_highlights', 'Industry-aligned curriculum|Mentor-led small batches|Verified certificates|Placement support'),
   -- Splash / flash screen
   ('splash_enabled', '1'),
-  ('splash_text',    'Industry-Ready Skills. Globally Recognized Certificates.');
+  ('splash_text',    'Industry-Ready Skills. Globally Recognized Certificates.'),
+  ('logo',           '');
 
 -- -------------------------------------------------------------
 -- Admins

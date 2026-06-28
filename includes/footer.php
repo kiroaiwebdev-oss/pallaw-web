@@ -50,7 +50,11 @@ try { $footerCats = db()->query("SELECT name, slug FROM categories ORDER BY name
     <div class="grid gap-10 md:grid-cols-2 lg:grid-cols-12 py-12">
       <div class="lg:col-span-4">
         <a href="<?= url('index.php') ?>" class="flex items-center gap-2.5 mb-4">
-          <span class="grid place-items-center w-10 h-10 rounded-2xl tile-accent text-white font-display font-bold text-lg">N</span>
+          <?php $flogo = media(setting('logo')); if ($flogo): ?>
+            <span class="grid place-items-center w-10 h-10 rounded-2xl bg-white overflow-hidden"><img src="<?= e($flogo) ?>" alt="<?= e(setting('site_name')) ?>" class="w-full h-full object-contain p-1"></span>
+          <?php else: ?>
+            <span class="grid place-items-center w-10 h-10 rounded-2xl tile-accent text-white font-display font-bold text-lg">N</span>
+          <?php endif; ?>
           <span class="font-display font-bold text-xl text-white tracking-tightest"><?= e(setting('site_name')) ?></span>
         </a>
         <p class="text-sm leading-relaxed text-slate-400 max-w-xs"><?= e(setting('about_short')) ?></p>

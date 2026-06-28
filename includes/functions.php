@@ -40,6 +40,69 @@ function fmt_date(?string $date, string $format = 'd M Y'): string
 }
 
 /* ---------------------------------------------------------------
+ * Media / uploads
+ * ------------------------------------------------------------- */
+
+/**
+ * Resolve a stored media value to a usable URL.
+ * - Absolute URLs (http/https/protocol-relative) and data: URIs are returned as-is.
+ * - Local relative paths (e.g. "assets/uploads/site/logo.png") are prefixed with BASE_URL.
+ * - Empty values return the provided fallback.
+ */
+function media(?string $path, string $fallback = ''): string
+{
+    $path = trim((string)$path);
+    if ($path === '') return $fallback;
+    if (preg_match('#^(https?:)?//#i', $path) || strncmp($path, 'data:', 5) === 0) {
+        return $path;
+    }
+    return url($path);
+}
+
+/**
+ * Securely handle an <input type="file"> image upload.
+ * Returns the new relative path on success, or $existing if nothing was uploaded / on error.
+ * Stores into /assets/uploads/<subdir>/ and best-effort removes the previous uploaded file.
+ */
+function upload_image(string $field, string $subdir, ?string $existing = null): ?string
+{
+    if (empty($_FILES[$field]) || !isset($_FILES[$field]['error']) || $_FILES[$field]['error'] === UPLOAD_ERR_NO_FILE) {
+        return $existing;
+    }
+    $f = $_FILES[$field];
+    if ($f['error'] !== UPLOAD_ERR_OK) { flash('error', 'File upload failed. Please try again.'); return $existing; }
+    if ($f['size'] > 3 * 1024 * 1024) { flash('error', 'Image is too large (max 3 MB).'); return $existing; }
+
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime  = $finfo ? finfo_file($finfo, $f['tmp_name']) : null;
+    if ($finfo) finfo_close($finfo);
+
+    $allowed = [
+        'image/jpeg' => 'jpg', 'image/pjpeg' => 'jpg', 'image/png' => 'png',
+        'image/webp' => 'webp', 'image/gif' => 'gif', 'image/svg+xml' => 'svg',
+    ];
+    if (!isset($allowed[$mime])) { flash('error', 'Unsupported image type. Use JPG, PNG, WEBP, GIF or SVG.'); return $existing; }
+
+    $ext  = $allowed[$mime];
+    $base = realpath(__DIR__ . '/..');
+    $dir  = $base . '/assets/uploads/' . $subdir;
+    if (!is_dir($dir) && !@mkdir($dir, 0775, true) && !is_dir($dir)) {
+        flash('error', 'Upload folder is not writable.'); return $existing;
+    }
+    $fname = $subdir . '-' . date('Ymd-His') . '-' . bin2hex(random_bytes(4)) . '.' . $ext;
+    if (!move_uploaded_file($f['tmp_name'], $dir . '/' . $fname)) {
+        flash('error', 'Could not save the uploaded image.'); return $existing;
+    }
+
+    // Remove the previous uploaded file (only if it lived in our uploads dir)
+    $prefix = 'assets/uploads/' . $subdir . '/';
+    if ($existing && strncmp($existing, $prefix, strlen($prefix)) === 0) {
+        @unlink($base . '/' . $existing);
+    }
+    return $prefix . $fname;
+}
+
+/* ---------------------------------------------------------------
  * Settings (cached for the request)
  * ------------------------------------------------------------- */
 function settings(): array

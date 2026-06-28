@@ -4,6 +4,9 @@ $page        = $page        ?? '';
 $page_title  = $page_title  ?? '';
 $site        = setting('site_name', 'Nexora Institute');
 $title       = $page_title ? "$page_title · $site" : "$site · " . setting('tagline', 'Industry-Ready Skills');
+$logo        = media(setting('logo'));
+$me          = student_logged_in() ? current_student() : null;
+$myPhoto     = $me ? media($me['photo'] ?? '') : '';
 
 $navLinks = [
   'home'     => ['Home',    'index.php'],
@@ -65,7 +68,11 @@ tailwind.config = {
 <!-- Splash / flash screen (shown once per session, toggle in Admin → Settings) -->
 <div id="splash" data-splash>
   <div class="splash-inner">
-    <span class="splash-logo">N</span>
+    <?php if ($logo): ?>
+      <span class="splash-logo" style="background:#fff"><img src="<?= e($logo) ?>" alt="<?= e($site) ?>" style="width:100%;height:100%;object-fit:contain;padding:14px"></span>
+    <?php else: ?>
+      <span class="splash-logo">N</span>
+    <?php endif; ?>
     <p class="splash-name"><?= e($site) ?></p>
     <p class="splash-text"><?= e(setting('splash_text', setting('tagline'))) ?></p>
     <div class="splash-bar"><span></span></div>
@@ -90,7 +97,11 @@ tailwind.config = {
     <nav id="navbar-bar" class="tactile rounded-full px-3 sm:px-4 transition-all duration-300">
       <div class="flex items-center justify-between h-14 lg:h-16">
         <a href="<?= url('index.php') ?>" class="flex items-center gap-2 sm:gap-2.5 group shrink-0 min-w-0 pl-1">
-          <span class="grid place-items-center w-9 h-9 sm:w-10 sm:h-10 rounded-2xl tile-accent text-white font-display font-bold text-base sm:text-lg group-active:translate-y-0.5 transition-transform shrink-0">N</span>
+          <?php if ($logo): ?>
+            <span class="grid place-items-center w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-white chip-raised overflow-hidden shrink-0 group-active:translate-y-0.5 transition-transform"><img src="<?= e($logo) ?>" alt="<?= e($site) ?>" class="w-full h-full object-contain p-1"></span>
+          <?php else: ?>
+            <span class="grid place-items-center w-9 h-9 sm:w-10 sm:h-10 rounded-2xl tile-accent text-white font-display font-bold text-base sm:text-lg group-active:translate-y-0.5 transition-transform shrink-0">N</span>
+          <?php endif; ?>
           <span class="font-display font-bold text-base sm:text-xl tracking-tightest text-ink text-emboss truncate"><?= e($site) ?></span>
         </a>
 
@@ -103,7 +114,18 @@ tailwind.config = {
         </div>
 
         <div class="hidden lg:flex items-center gap-2.5">
-          <a href="<?= url('student/login.php') ?>" class="btn3d-light inline-flex items-center text-[15px] px-5 py-2.5">Student Login</a>
+          <?php if ($me): ?>
+            <a href="<?= url('student/dashboard.php') ?>" class="btn3d-light inline-flex items-center gap-2 text-[15px] pl-1.5 pr-4 py-1.5">
+              <?php if ($myPhoto): ?>
+                <img src="<?= e($myPhoto) ?>" alt="" class="w-8 h-8 rounded-full object-cover">
+              <?php else: ?>
+                <span class="grid place-items-center w-8 h-8 rounded-full tile-accent text-white text-xs font-bold"><?= e(strtoupper(substr($me['name'],0,1))) ?></span>
+              <?php endif; ?>
+              Dashboard
+            </a>
+          <?php else: ?>
+            <a href="<?= url('student/login.php') ?>" class="btn3d-light inline-flex items-center text-[15px] px-5 py-2.5">Student Login</a>
+          <?php endif; ?>
           <a href="<?= url('courses.php') ?>" class="btn3d btn-shine group inline-flex items-center gap-1.5 text-[15px] text-white px-5 py-2.5">
             Enroll Now <?= icon('arrow-right','w-4 h-4 group-hover:translate-x-0.5 transition-transform') ?>
           </a>
@@ -132,7 +154,15 @@ tailwind.config = {
         <?php endforeach; ?>
       </div>
       <div class="p-4 space-y-3">
-        <a href="<?= url('student/login.php') ?>" class="btn3d-light block text-center px-4 py-3.5 font-semibold text-slate-700">Student Login</a>
+        <?php if ($me): ?>
+          <a href="<?= url('student/dashboard.php') ?>" class="btn3d-light flex items-center justify-center gap-2 px-4 py-3.5 font-semibold text-slate-700">
+            <?php if ($myPhoto): ?><img src="<?= e($myPhoto) ?>" alt="" class="w-7 h-7 rounded-full object-cover">
+            <?php else: ?><span class="grid place-items-center w-7 h-7 rounded-full tile-accent text-white text-xs font-bold"><?= e(strtoupper(substr($me['name'],0,1))) ?></span><?php endif; ?>
+            My Dashboard
+          </a>
+        <?php else: ?>
+          <a href="<?= url('student/login.php') ?>" class="btn3d-light block text-center px-4 py-3.5 font-semibold text-slate-700">Student Login</a>
+        <?php endif; ?>
         <a href="<?= url('courses.php') ?>" class="btn3d block text-center px-4 py-3.5 text-white font-semibold">Enroll Now</a>
         <a href="tel:<?= e(setting('phone')) ?>" class="flex items-center justify-center gap-2 px-4 py-3 text-sm text-slate-500"><?= icon('phone','w-4 h-4') ?><?= e(setting('phone')) ?></a>
       </div>

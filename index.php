@@ -315,7 +315,7 @@ $catIcons = ['cad-design'=>'compass','software-it'=>'code','data-ai'=>'cpu','bus
       ?>
         <div class="reveal tactile tactile-lift p-6 text-center" data-delay="<?= $i % 4 ?>">
           <?php if (!empty($m['photo'])): ?>
-            <img src="<?= e($m['photo']) ?>" alt="<?= e($m['name']) ?>" class="w-20 h-20 rounded-2xl object-cover mx-auto chip-raised p-0.5">
+            <img src="<?= e(media($m['photo'])) ?>" alt="<?= e($m['name']) ?>" class="w-20 h-20 rounded-2xl object-cover mx-auto chip-raised p-0.5">
           <?php else: ?>
             <span class="grid place-items-center w-20 h-20 rounded-2xl tile-accent text-white font-display font-bold text-2xl mx-auto"><?= e(strtoupper(substr($m['name'],0,1))) ?></span>
           <?php endif; ?>
@@ -391,7 +391,7 @@ $catIcons = ['cad-design'=>'compass','software-it'=>'code','data-ai'=>'cpu','bus
         <article class="reveal tactile tactile-lift overflow-hidden flex flex-col p-2.5" data-delay="<?= $i % 3 ?>">
           <div class="relative h-40 rounded-2xl overflow-hidden">
             <?php if (!empty($w['image'])): ?>
-              <img src="<?= e($w['image']) ?>" alt="<?= e($w['title']) ?>" class="w-full h-full object-cover">
+              <img src="<?= e(media($w['image'])) ?>" alt="<?= e($w['title']) ?>" class="w-full h-full object-cover">
             <?php else: ?>
               <div class="w-full h-full obsidian grid place-items-center text-white/25"><div class="absolute inset-0 bg-dots opacity-40"></div><span class="relative"><?= icon('briefcase','w-12 h-12') ?></span></div>
             <?php endif; ?>

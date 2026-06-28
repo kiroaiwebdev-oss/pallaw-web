@@ -31,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $expertise = trim($_POST['expertise'] ?? '');
         $bio       = trim($_POST['bio'] ?? '');
         $photo     = trim($_POST['photo'] ?? '');
+        $photo     = upload_image('photo_file', 'faculty', $photo);
         $linkedin  = trim($_POST['linkedin'] ?? '');
         $sort      = (int)($_POST['sort_order'] ?? 0);
         $status    = $_POST['status'] ?? 'active';
@@ -56,7 +57,7 @@ if ($action === 'new' || $action === 'edit') {
     admin_layout_top('faculty', $action==='edit'?'Edit Faculty':'Add Faculty');
     ?>
     <a href="<?= url('admin/faculty.php') ?>" class="inline-flex items-center gap-1 text-sm font-semibold text-slate-500 hover:text-slate-900 mb-4">← Back to faculty</a>
-    <form method="post" class="rounded-2xl bg-white border border-slate-100 p-6 sm:p-8 max-w-2xl space-y-5">
+    <form method="post" enctype="multipart/form-data" class="rounded-2xl bg-white border border-slate-100 p-6 sm:p-8 max-w-2xl space-y-5">
       <?= csrf_field() ?><input type="hidden" name="do" value="save"><input type="hidden" name="id" value="<?= (int)$f['id'] ?>">
       <div class="grid sm:grid-cols-2 gap-4">
         <div><?= field_label('Full Name *') ?><input name="name" value="<?= e($f['name']) ?>" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-400"></div>
@@ -65,7 +66,14 @@ if ($action === 'new' || $action === 'edit') {
       <div><?= field_label('Expertise (comma separated)') ?><input name="expertise" value="<?= e($f['expertise']) ?>" placeholder="AutoCAD, SolidWorks" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-400"></div>
       <div><?= field_label('Short Bio') ?><textarea name="bio" rows="3" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-400"><?= e($f['bio']) ?></textarea></div>
       <div class="grid sm:grid-cols-2 gap-4">
-        <div><?= field_label('Photo URL (optional)') ?><input name="photo" value="<?= e($f['photo']) ?>" placeholder="https://…/photo.jpg" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-400"></div>
+        <div>
+          <?= field_label('Photo') ?>
+          <div class="flex items-center gap-3">
+            <?php if (!empty($f['photo'])): ?><img src="<?= e(media($f['photo'])) ?>" alt="" class="w-14 h-14 rounded-full object-cover border border-slate-200 shrink-0"><?php endif; ?>
+            <input type="file" name="photo_file" accept="image/png,image/jpeg,image/webp" class="block w-full text-sm text-slate-600 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 cursor-pointer">
+          </div>
+          <input name="photo" value="<?= e($f['photo']) ?>" placeholder="…or paste an image URL" class="mt-2 w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-400">
+        </div>
         <div><?= field_label('LinkedIn URL (optional)') ?><input name="linkedin" value="<?= e($f['linkedin']) ?>" placeholder="https://linkedin.com/in/…" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-400"></div>
       </div>
       <div class="grid sm:grid-cols-2 gap-4">
@@ -90,7 +98,7 @@ admin_layout_top('faculty', 'Faculty');
           <tr class="hover:bg-slate-50">
             <td class="px-5 py-4">
               <div class="flex items-center gap-3">
-                <?php if ($r['photo']): ?><img src="<?= e($r['photo']) ?>" alt="" class="w-9 h-9 rounded-full object-cover">
+                <?php if ($r['photo']): ?><img src="<?= e(media($r['photo'])) ?>" alt="" class="w-9 h-9 rounded-full object-cover">
                 <?php else: ?><span class="grid place-items-center w-9 h-9 rounded-full bg-gradient-to-br from-brand-500 to-violet-600 text-white text-sm font-bold"><?= e(strtoupper(substr($r['name'],0,1))) ?></span><?php endif; ?>
                 <span class="font-medium text-slate-900"><?= e($r['name']) ?></span>
               </div>

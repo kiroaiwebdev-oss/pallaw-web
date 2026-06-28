@@ -30,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $desc  = trim($_POST['description'] ?? '');
         $link  = trim($_POST['link'] ?? '');
         $image = trim($_POST['image'] ?? '');
+        $image = upload_image('image_file', 'works', $image);
         $sort  = (int)($_POST['sort_order'] ?? 0);
         $status= $_POST['status'] ?? 'published';
         if ($title === '') { flash('error','Title is required.'); redirect('admin/works.php?action=' . ($id?'edit&id='.$id:'new')); }
@@ -54,7 +55,7 @@ if ($action === 'new' || $action === 'edit') {
     admin_layout_top('works', $action==='edit'?'Edit Work':'Add Work');
     ?>
     <a href="<?= url('admin/works.php') ?>" class="inline-flex items-center gap-1 text-sm font-semibold text-slate-500 hover:text-slate-900 mb-4">← Back to work</a>
-    <form method="post" class="rounded-2xl bg-white border border-slate-100 p-6 sm:p-8 max-w-2xl space-y-5">
+    <form method="post" enctype="multipart/form-data" class="rounded-2xl bg-white border border-slate-100 p-6 sm:p-8 max-w-2xl space-y-5">
       <?= csrf_field() ?><input type="hidden" name="do" value="save"><input type="hidden" name="id" value="<?= (int)$w['id'] ?>">
       <div class="grid sm:grid-cols-2 gap-4">
         <div><?= field_label('Project Title *') ?><input name="title" value="<?= e($w['title']) ?>" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-400"></div>
@@ -63,7 +64,14 @@ if ($action === 'new' || $action === 'edit') {
       <div><?= field_label('Description') ?><textarea name="description" rows="3" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-400"><?= e($w['description']) ?></textarea></div>
       <div class="grid sm:grid-cols-2 gap-4">
         <div><?= field_label('Live / Project Link (optional)') ?><input name="link" value="<?= e($w['link']) ?>" placeholder="https://…" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-400"></div>
-        <div><?= field_label('Image URL (optional)') ?><input name="image" value="<?= e($w['image']) ?>" placeholder="https://…/cover.jpg" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-400"></div>
+        <div>
+          <?= field_label('Cover Image') ?>
+          <div class="flex items-center gap-3">
+            <?php if (!empty($w['image'])): ?><img src="<?= e(media($w['image'])) ?>" alt="" class="w-14 h-14 rounded-lg object-cover border border-slate-200 shrink-0"><?php endif; ?>
+            <input type="file" name="image_file" accept="image/png,image/jpeg,image/webp" class="block w-full text-sm text-slate-600 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 cursor-pointer">
+          </div>
+          <input name="image" value="<?= e($w['image']) ?>" placeholder="…or paste an image URL" class="mt-2 w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-400">
+        </div>
       </div>
       <div class="grid sm:grid-cols-2 gap-4">
         <div><?= field_label('Sort Order (lower = first)') ?><input type="number" name="sort_order" value="<?= (int)$w['sort_order'] ?>" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-400"></div>

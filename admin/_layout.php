@@ -40,12 +40,16 @@ function admin_layout_top(string $active, string $title): void
 <link rel="stylesheet" href="<?= url('assets/css/style.css') ?>">
 </head><body class="font-sans bg-slate-100 text-slate-800 antialiased">
 <div class="min-h-screen lg:flex">
-  <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-40 w-72 bg-slate-950 text-slate-300 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col">
-    <div class="p-6 flex items-center gap-3 border-b border-white/10">
-      <span class="grid place-items-center w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-violet-600 text-white font-display font-bold">N</span>
-      <div><p class="font-display font-bold text-white leading-tight"><?= e(setting('site_name')) ?></p><p class="text-xs text-brand-400">Admin Console</p></div>
+  <aside id="sidebar" class="fixed lg:sticky inset-y-0 lg:top-0 left-0 z-40 w-72 lg:h-screen bg-slate-950 text-slate-300 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col">
+    <div class="p-6 flex items-center gap-3 border-b border-white/10 shrink-0">
+      <?php $alogo = media(setting('logo')); if ($alogo): ?>
+        <span class="grid place-items-center w-10 h-10 rounded-xl bg-white overflow-hidden shrink-0"><img src="<?= e($alogo) ?>" alt="" class="w-full h-full object-contain p-1"></span>
+      <?php else: ?>
+        <span class="grid place-items-center w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-violet-600 text-white font-display font-bold shrink-0">N</span>
+      <?php endif; ?>
+      <div class="min-w-0"><p class="font-display font-bold text-white leading-tight truncate"><?= e(setting('site_name')) ?></p><p class="text-xs text-brand-400">Admin Console</p></div>
     </div>
-    <nav class="flex-1 p-4 space-y-5 overflow-y-auto">
+    <nav class="flex-1 p-4 space-y-5 overflow-y-auto sb-scroll">
       <?php foreach ($groups as $gname => $items): ?>
         <div>
           <p class="px-4 text-[11px] uppercase tracking-wider text-slate-500 font-semibold mb-1"><?= $gname ?></p>
@@ -57,7 +61,7 @@ function admin_layout_top(string $active, string $title): void
         </div>
       <?php endforeach; ?>
     </nav>
-    <div class="p-4 border-t border-white/10">
+    <div class="p-4 border-t border-white/10 shrink-0">
       <a href="<?= url('index.php') ?>" target="_blank" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm hover:bg-white/5 hover:text-white transition">🌐 View Website</a>
       <a href="<?= url('admin/logout.php') ?>" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-rose-300 hover:bg-rose-500/10 transition">⎋ Logout</a>
     </div>

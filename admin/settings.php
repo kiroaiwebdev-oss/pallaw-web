@@ -60,6 +60,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
+
+    // Logo: upload a new one, or remove the current one
+    $currentLogo = setting('logo');
+    $base = realpath(__DIR__ . '/..');
+    if (!empty($_POST['remove_logo'])) {
+        if ($currentLogo && strncmp($currentLogo, 'assets/uploads/site/', 20) === 0) @unlink($base . '/' . $currentLogo);
+        $upd->execute(['logo', '']);
+    } else {
+        $newLogo = upload_image('logo', 'site', $currentLogo);
+        if ($newLogo !== $currentLogo) $upd->execute(['logo', $newLogo ?? '']);
+    }
+
     flash('success','Settings saved.');
     redirect('admin/settings.php');
 }
@@ -67,8 +79,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 admin_layout_top('settings', 'Settings');
 ?>
 <div class="grid lg:grid-cols-3 gap-6">
-  <form method="post" class="lg:col-span-2 space-y-6">
+  <form method="post" enctype="multipart/form-data" class="lg:col-span-2 space-y-6">
     <?= csrf_field() ?>
+    <!-- Logo -->
+    <div class="rounded-2xl bg-white border border-slate-100 p-6">
+      <h3 class="font-display text-lg font-bold text-slate-900 mb-4">Logo</h3>
+      <div class="flex items-center gap-5 flex-wrap">
+        <div class="grid place-items-center w-20 h-20 rounded-2xl bg-slate-900 overflow-hidden shrink-0">
+          <?php if (setting('logo')): ?>
+            <img src="<?= e(media(setting('logo'))) ?>" class="w-full h-full object-contain p-2" alt="Current logo">
+          <?php else: ?>
+            <span class="text-white font-display font-bold text-2xl"><?= e(strtoupper(substr(setting('site_name','N'),0,1))) ?></span>
+          <?php endif; ?>
+        </div>
+        <div class="flex-1 min-w-[220px]">
+          <input type="file" name="logo" accept="image/png,image/jpeg,image/webp,image/svg+xml,image/gif"
+                 class="block w-full text-sm text-slate-600 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 cursor-pointer">
+          <p class="text-xs text-slate-400 mt-2">PNG or SVG recommended · max 3&nbsp;MB · used in header, footer, splash &amp; admin.</p>
+          <?php if (setting('logo')): ?>
+            <label class="inline-flex items-center gap-2 mt-3 text-sm text-rose-600 font-medium"><input type="checkbox" name="remove_logo" value="1" class="rounded border-slate-300"> Remove current logo</label>
+          <?php endif; ?>
+        </div>
+      </div>
+    </div>
+
     <?php foreach ($fields as $group => $items): ?>
       <div class="rounded-2xl bg-white border border-slate-100 p-6">
         <h3 class="font-display text-lg font-bold text-slate-900 mb-4"><?= e($group) ?></h3>
