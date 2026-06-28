@@ -38,7 +38,15 @@ INSERT INTO settings (skey, svalue) VALUES
   ('instagram',   '#'),
   ('linkedin',    '#'),
   ('youtube',     '#'),
-  ('map_embed',   'https://www.google.com/maps?q=MG+Road+Bangalore&output=embed');
+  ('map_embed',   'https://www.google.com/maps?q=MG+Road+Bangalore&output=embed'),
+  -- Institute profile (editable from admin -> shown on homepage & splash)
+  ('director_name',  'Arun Kumar'),
+  ('director_role',  'Founder & Lead Mentor'),
+  ('established',     '2018'),
+  ('institute_highlights', 'Industry-aligned curriculum|Mentor-led small batches|Verified certificates|Placement support'),
+  -- Splash / flash screen
+  ('splash_enabled', '1'),
+  ('splash_text',    'Industry-Ready Skills. Globally Recognized Certificates.');
 
 -- -------------------------------------------------------------
 -- Admins
@@ -268,6 +276,49 @@ CREATE TABLE contacts (
   status     ENUM('new','read','responded') DEFAULT 'new',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
+
+-- -------------------------------------------------------------
+-- Faculty profiles  (managed from Admin -> Faculty)
+-- -------------------------------------------------------------
+DROP TABLE IF EXISTS faculty;
+CREATE TABLE faculty (
+  id          INT AUTO_INCREMENT PRIMARY KEY,
+  name        VARCHAR(140) NOT NULL,
+  role        VARCHAR(140) NULL,
+  expertise   VARCHAR(200) NULL,
+  bio         TEXT NULL,
+  photo       VARCHAR(255) NULL,
+  linkedin    VARCHAR(255) NULL,
+  sort_order  INT DEFAULT 0,
+  status      ENUM('active','hidden') DEFAULT 'active',
+  created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+INSERT INTO faculty (name, role, expertise, bio, sort_order, status) VALUES
+  ('Arun Kumar', 'Founder & Lead Mentor', 'Full Stack, Data Science', 'A software developer and educator with years of industry experience building real products and mentoring job-ready developers.', 1, 'active'),
+  ('Priya Nair', 'Senior CAD Faculty', 'AutoCAD, SolidWorks', 'Mechanical design specialist helping students master industry-standard CAD workflows with hands-on projects.', 2, 'active'),
+  ('Rahul Verma', 'SAP & Business Mentor', 'SAP FICO, Analytics', 'Enterprise consultant guiding learners through real SAP configuration and finance scenarios.', 3, 'active');
+
+-- -------------------------------------------------------------
+-- Our Work  (institute / owner's professional projects)
+-- -------------------------------------------------------------
+DROP TABLE IF EXISTS works;
+CREATE TABLE works (
+  id          INT AUTO_INCREMENT PRIMARY KEY,
+  title       VARCHAR(180) NOT NULL,
+  type        VARCHAR(100) NULL,
+  description TEXT NULL,
+  link        VARCHAR(255) NULL,
+  image       VARCHAR(255) NULL,
+  sort_order  INT DEFAULT 0,
+  status      ENUM('published','draft') DEFAULT 'published',
+  created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+INSERT INTO works (title, type, description, link, sort_order, status) VALUES
+  ('Institute ERP & Admissions Portal', 'Web Application', 'A custom student management and online admissions platform built end-to-end with PHP & MySQL.', '#', 1, 'published'),
+  ('Manufacturing Dashboard', 'Data & Automation', 'A real-time production analytics dashboard delivered for a mid-size manufacturing client.', '#', 2, 'published'),
+  ('E-Commerce Brand Store', 'Web Application', 'A complete online store with payments, inventory and an admin panel.', '#', 3, 'published');
 
 SET FOREIGN_KEY_CHECKS = 1;
 

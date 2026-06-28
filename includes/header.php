@@ -61,6 +61,19 @@ tailwind.config = {
 </head>
 <body class="font-sans bg-canvas text-slate-700 antialiased selection:bg-brand-100 grain">
 
+<?php if (setting('splash_enabled', '1') === '1'): ?>
+<!-- Splash / flash screen (shown once per session, toggle in Admin → Settings) -->
+<div id="splash" data-splash>
+  <div class="splash-inner">
+    <span class="splash-logo">N</span>
+    <p class="splash-name"><?= e($site) ?></p>
+    <p class="splash-text"><?= e(setting('splash_text', setting('tagline'))) ?></p>
+    <div class="splash-bar"><span></span></div>
+  </div>
+</div>
+<script>document.documentElement.classList.add('splash-active');document.body.classList.add('splash-lock');</script>
+<?php endif; ?>
+
 <!-- Announcement bar -->
 <div class="obsidian text-white relative z-10">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-center gap-2 text-center text-[13px]">

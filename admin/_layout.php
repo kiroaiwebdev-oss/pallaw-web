@@ -15,6 +15,10 @@ function admin_layout_top(string $active, string $title): void
             'categories'   => ['Categories',   '🏷️', 'categories.php'],
             'projects'     => ['Projects',     '🛠️', 'projects.php'],
         ],
+        'Showcase' => [
+            'faculty'      => ['Faculty',      '👩‍🏫', 'faculty.php'],
+            'works'        => ['Our Work',     '💼', 'works.php'],
+        ],
         'Students' => [
             'students'     => ['Students',     '👨‍🎓', 'students.php'],
             'enrollments'  => ['Enrollments',  '📝', 'enrollments.php'],

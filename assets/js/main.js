@@ -4,6 +4,27 @@
 (function () {
   'use strict';
 
+  /* ---- Splash / flash screen (once per session) ---- */
+  (function () {
+    const splash = document.getElementById('splash');
+    if (!splash) return;
+    const done = () => {
+      splash.classList.add('is-hidden');
+      document.documentElement.classList.remove('splash-active');
+      document.body.classList.remove('splash-lock');
+      setTimeout(() => splash.parentNode && splash.remove(), 800);
+    };
+    if (sessionStorage.getItem('nx_splash_seen')) {
+      splash.style.transition = 'none';
+      done();
+    } else {
+      sessionStorage.setItem('nx_splash_seen', '1');
+      setTimeout(done, 1300);
+      // safety: never trap the user
+      setTimeout(done, 4000);
+    }
+  })();
+
   /* ---- Mobile menu (slide-in panel) ---- */
   const menuBtn   = document.getElementById('menuBtn');
   const menu      = document.getElementById('mobileMenu');

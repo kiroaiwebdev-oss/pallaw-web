@@ -17,6 +17,13 @@ $categories = db()->query(
 
 $projects = db()->query("SELECT p.*, c.title AS course FROM projects p LEFT JOIN courses c ON c.id=p.course_id WHERE p.status='published' ORDER BY p.id DESC LIMIT 3")->fetchAll();
 
+// Faculty & Our Work (optional tables — hide gracefully if not yet created)
+$faculty = [];
+try { $faculty = db()->query("SELECT * FROM faculty WHERE status='active' ORDER BY sort_order ASC, id ASC LIMIT 8")->fetchAll(); } catch (Throwable $e) {}
+$works = [];
+try { $works = db()->query("SELECT * FROM works WHERE status='published' ORDER BY sort_order ASC, id DESC LIMIT 6")->fetchAll(); } catch (Throwable $e) {}
+$instHighlights = array_values(array_filter(array_map('trim', explode('|', setting('institute_highlights')))));
+
 include __DIR__ . '/includes/header.php';
 
 $catIcons = ['cad-design'=>'compass','software-it'=>'code','data-ai'=>'cpu','business-sap'=>'briefcase','digital-marketing'=>'megaphone'];
@@ -149,6 +156,47 @@ $catIcons = ['cad-design'=>'compass','software-it'=>'code','data-ai'=>'cpu','bus
   </div>
 </section>
 
+<!-- ============ INSTITUTE PROFILE ============ -->
+<section class="py-12 sm:py-16 lg:py-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+    <div class="reveal">
+      <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full chip-inset text-sm font-semibold text-brand-600"><?= icon('building','w-4 h-4') ?> Institute Profile</span>
+      <h2 class="mt-4 font-display text-3xl sm:text-[40px] font-bold text-ink tracking-tightest leading-tight text-emboss">About <?= e(setting('site_name')) ?></h2>
+      <p class="mt-4 text-slate-500 text-base sm:text-lg leading-relaxed"><?= e(setting('about_short')) ?></p>
+      <div class="mt-7 flex flex-wrap gap-3">
+        <div class="tactile inline-flex items-center gap-3 px-4 py-3">
+          <span class="grid place-items-center w-11 h-11 rounded-xl tile-accent text-white font-bold shrink-0"><?= e(strtoupper(substr(setting('director_name','A'),0,1))) ?></span>
+          <div class="leading-tight">
+            <p class="font-semibold text-ink text-sm"><?= e(setting('director_name')) ?></p>
+            <p class="text-xs text-slate-500"><?= e(setting('director_role')) ?></p>
+          </div>
+        </div>
+        <?php if (setting('established')): ?>
+        <div class="tactile inline-flex items-center gap-2.5 px-4 py-3">
+          <span class="grid place-items-center w-11 h-11 rounded-xl chip-inset text-brand-600 shrink-0"><?= icon('calendar','w-5 h-5') ?></span>
+          <div class="leading-tight"><p class="font-semibold text-ink text-sm">Est. <?= e(setting('established')) ?></p><p class="text-xs text-slate-500">Trusted for years</p></div>
+        </div>
+        <?php endif; ?>
+      </div>
+      <div class="mt-7 flex flex-wrap gap-3">
+        <a href="<?= url('about.php') ?>" class="btn3d btn-shine inline-flex items-center gap-2 px-6 py-3 text-white font-semibold">Read more <?= icon('arrow-right','w-4 h-4') ?></a>
+        <a href="<?= url('contact.php') ?>" class="btn3d-light inline-flex items-center gap-2 px-6 py-3 font-semibold text-slate-700"><?= icon('headset','w-4 h-4') ?> Talk to us</a>
+      </div>
+    </div>
+    <div class="reveal tactile-xl p-6 sm:p-8" data-delay="1">
+      <p class="text-sm font-semibold text-slate-400 uppercase tracking-wide">What makes us different</p>
+      <ul class="mt-4 space-y-3">
+        <?php foreach (($instHighlights ?: ['Industry-aligned curriculum','Mentor-led small batches','Verified certificates','Placement support']) as $hl): ?>
+          <li class="flex items-center gap-3 p-3.5 rounded-xl tactile-inset">
+            <span class="grid place-items-center w-8 h-8 rounded-lg tile-emerald text-white shrink-0"><?= icon('check','w-4 h-4') ?></span>
+            <span class="text-sm font-medium text-slate-700"><?= e($hl) ?></span>
+          </li>
+        <?php endforeach; ?>
+      </ul>
+    </div>
+  </div>
+</section>
+
 <!-- ============ CATEGORIES ============ -->
 <section class="py-16 lg:py-20">
   <div class="max-w-7xl mx-auto px-4 sm:px-6">
@@ -252,6 +300,43 @@ $catIcons = ['cad-design'=>'compass','software-it'=>'code','data-ai'=>'cpu','bus
   </div>
 </section>
 
+<!-- ============ FACULTY ============ -->
+<?php if ($faculty): ?>
+<section class="py-12 sm:py-16 lg:py-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="text-center max-w-2xl mx-auto reveal">
+      <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full chip-inset text-sm font-semibold text-brand-600"><?= icon('users','w-4 h-4') ?> Faculty</span>
+      <h2 class="mt-4 font-display text-3xl sm:text-[40px] font-bold text-ink tracking-tightest text-emboss">Learn from industry mentors</h2>
+      <p class="mt-4 text-slate-500 text-base sm:text-lg">Working professionals who've built real products and trained job-ready talent.</p>
+    </div>
+    <div class="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+      <?php foreach ($faculty as $i => $m):
+        $exp = array_values(array_filter(array_map('trim', explode(',', (string)$m['expertise']))));
+      ?>
+        <div class="reveal tactile tactile-lift p-6 text-center" data-delay="<?= $i % 4 ?>">
+          <?php if (!empty($m['photo'])): ?>
+            <img src="<?= e($m['photo']) ?>" alt="<?= e($m['name']) ?>" class="w-20 h-20 rounded-2xl object-cover mx-auto chip-raised p-0.5">
+          <?php else: ?>
+            <span class="grid place-items-center w-20 h-20 rounded-2xl tile-accent text-white font-display font-bold text-2xl mx-auto"><?= e(strtoupper(substr($m['name'],0,1))) ?></span>
+          <?php endif; ?>
+          <h3 class="mt-4 font-semibold text-ink"><?= e($m['name']) ?></h3>
+          <?php if ($m['role']): ?><p class="text-sm text-brand-600 font-medium"><?= e($m['role']) ?></p><?php endif; ?>
+          <?php if ($m['bio']): ?><p class="mt-2 text-xs text-slate-500 leading-relaxed line-clamp-3"><?= e($m['bio']) ?></p><?php endif; ?>
+          <?php if ($exp): ?>
+            <div class="mt-3 flex flex-wrap justify-center gap-1.5">
+              <?php foreach (array_slice($exp,0,3) as $tag): ?><span class="px-2.5 py-1 rounded-full chip-inset text-[11px] font-medium text-slate-600"><?= e($tag) ?></span><?php endforeach; ?>
+            </div>
+          <?php endif; ?>
+          <?php if (!empty($m['linkedin'])): ?>
+            <a href="<?= e($m['linkedin']) ?>" target="_blank" rel="noopener" aria-label="LinkedIn" class="mt-4 inline-grid place-items-center w-9 h-9 rounded-full chip-raised text-brand-600 hover:text-brand-700 active:translate-y-0.5 transition"><?= icon('linkedin','w-4 h-4') ?></a>
+          <?php endif; ?>
+        </div>
+      <?php endforeach; ?>
+    </div>
+  </div>
+</section>
+<?php endif; ?>
+
 <!-- ============ WHY US (bento) ============ -->
 <section class="mx-3 sm:mx-6 my-4 rounded-[34px] obsidian text-white py-16 lg:py-24 relative overflow-hidden">
   <div class="absolute inset-0 bg-grid"></div>
@@ -288,6 +373,43 @@ $catIcons = ['cad-design'=>'compass','software-it'=>'code','data-ai'=>'cpu','bus
     </div>
   </div>
 </section>
+
+<!-- ============ OUR WORK ============ -->
+<?php if ($works): ?>
+<section class="py-12 sm:py-16 lg:py-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="flex flex-wrap items-end justify-between gap-4 reveal">
+      <div class="max-w-xl">
+        <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full chip-inset text-sm font-semibold text-brand-600"><?= icon('briefcase','w-4 h-4') ?> Our Work</span>
+        <h2 class="mt-4 font-display text-3xl sm:text-[40px] font-bold text-ink tracking-tightest text-emboss">Projects we've delivered</h2>
+        <p class="mt-3 text-slate-500 text-base sm:text-lg">Beyond teaching — real products and solutions built for clients.</p>
+      </div>
+    </div>
+    <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
+      <?php foreach ($works as $i => $w): ?>
+        <?php $tag = is_string($w['link'] ?? null) && $w['link'] !== '' && $w['link'] !== '#'; ?>
+        <article class="reveal tactile tactile-lift overflow-hidden flex flex-col p-2.5" data-delay="<?= $i % 3 ?>">
+          <div class="relative h-40 rounded-2xl overflow-hidden">
+            <?php if (!empty($w['image'])): ?>
+              <img src="<?= e($w['image']) ?>" alt="<?= e($w['title']) ?>" class="w-full h-full object-cover">
+            <?php else: ?>
+              <div class="w-full h-full obsidian grid place-items-center text-white/25"><div class="absolute inset-0 bg-dots opacity-40"></div><span class="relative"><?= icon('briefcase','w-12 h-12') ?></span></div>
+            <?php endif; ?>
+          </div>
+          <div class="p-4 pt-5 flex flex-col flex-1">
+            <?php if ($w['type']): ?><span class="text-xs font-semibold text-brand-600 uppercase tracking-wide"><?= e($w['type']) ?></span><?php endif; ?>
+            <h3 class="mt-1.5 font-semibold text-ink"><?= e($w['title']) ?></h3>
+            <?php if ($w['description']): ?><p class="mt-2 text-sm text-slate-500 line-clamp-3 flex-1"><?= e($w['description']) ?></p><?php endif; ?>
+            <?php if ($tag): ?>
+              <a href="<?= e($w['link']) ?>" target="_blank" rel="noopener" class="mt-4 inline-flex items-center gap-1.5 font-semibold text-brand-600 hover:text-brand-700 text-sm">View project <?= icon('arrow-up-right','w-4 h-4') ?></a>
+            <?php endif; ?>
+          </div>
+        </article>
+      <?php endforeach; ?>
+    </div>
+  </div>
+</section>
+<?php endif; ?>
 
 <!-- ============ HOW IT WORKS ============ -->
 <section class="py-16 lg:py-20">
