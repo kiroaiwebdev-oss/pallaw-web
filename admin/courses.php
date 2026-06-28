@@ -18,26 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $id          = (int)($_POST['id'] ?? 0);
         $title       = trim($_POST['title'] ?? '');
         $category_id = $_POST['category_id'] ?: null;
-
-        // Inline "create new category" straight from the course form
-        $new_category = trim($_POST['new_category'] ?? '');
-        if ($new_category !== '') {
-            $catSlug = slugify($new_category);
-            $look = $d->prepare("SELECT id FROM categories WHERE slug=? OR name=? LIMIT 1");
-            $look->execute([$catSlug, $new_category]);
-            $existingCat = $look->fetchColumn();
-            if ($existingCat) {
-                $category_id = (int)$existingCat;
-            } else {
-                try {
-                    $d->prepare("INSERT INTO categories (name, slug, icon) VALUES (?,?, 'graduation-cap')")->execute([$new_category, $catSlug]);
-                    $category_id = (int)$d->lastInsertId();
-                } catch (Throwable $e) {
-                    $look->execute([$catSlug, $new_category]);
-                    $category_id = ((int)$look->fetchColumn()) ?: $category_id;
-                }
-            }
-        }
         $short_desc  = trim($_POST['short_desc'] ?? '');
         $description = trim($_POST['description'] ?? '');
         $duration    = trim($_POST['duration'] ?? '');
@@ -93,10 +73,6 @@ if ($action === 'new' || $action === 'edit') {
             <option value="">— None —</option>
             <?php foreach ($categories as $cat): ?><option value="<?= $cat['id'] ?>" <?= (string)$course['category_id']===(string)$cat['id']?'selected':'' ?>><?= e($cat['name']) ?></option><?php endforeach; ?>
           </select>
-          <div class="mt-2">
-            <input name="new_category" value="" placeholder="➕ Or type a new category to create…" class="w-full px-3 py-2 text-sm rounded-lg border border-dashed border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-400 focus:border-brand-400">
-            <p class="mt-1 text-[11px] text-slate-400">No category in the list? Just type a new one here — it will be created &amp; selected automatically on save.</p>
-          </div>
         </div>
         <div>
           <?= field_label('Level') ?>
